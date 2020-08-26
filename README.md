@@ -1,6 +1,10 @@
 ### 简介
 
-基于transformers的语言模型在许多不同的自然语言处理(NLP)基准任务测试上都取得了很大进展。迁移学习与大规模的transformers语言模型的结合正在成为现代NLP的一个标准。在这篇文章,我们对transformers体系结构和文本分类问题做一些必要的理论介绍。然后，我们将演示预训练BERT模型在文本分类任务的微调过程，这里运用的是TensorFlow 2.0+的 Keras API。
+基于transformers的语言模型在许多不同的自然语言处理(NLP)基准任务测试上都取得了很大进展。迁移学习与大规模的transformers语言模型训练的结合正在成为现代NLP的一个标准。在这篇文章,我们对transformers体系结构和文本分类问题做一些必要的理论介绍。然后，我们将演示预训练BERT模型在文本分类任务的微调过程，这里运用的是TensorFlow 2.0+的 Keras API。
+
+
+
+
 
 
 
@@ -20,7 +24,11 @@
 
 - 多标签问题(multi-label classification)
 
-多分类也称为单标签问题，例如，我们为每个实例分配一个标签。名称中的"多"表示我们处理至少 3 个类，对于 2 个类，我们可以使用术语二进制分类(binary classification)。另一方面，多标签任务更为一般，允许我们为每个实例分配多个标签，而不仅仅是一样本一标签。
+多分类也称为单标签问题，例如，我们为每个样本分配一个标签。名称中的"多"表示我们处理至少 3 个类，对于 2 个类，我们可以使用术语二进制分类(binary classification)。另一方面，多标签任务更为一般，允许我们为每个样本分配多个标签，而不仅仅是一样本一标签。
+
+
+
+
 
 
 
@@ -35,21 +43,33 @@ transformers用于构建语言模型，而embeddings 是可以用于预训练的
 
 
 
+
+
+
+
 ### 基于 RNNs/LSTMs 的方法
 
-大多数较旧的语言建模方法都基于 RNN（recurrent neural network）。简单的 RNN 存在梯度消失/梯度爆炸问题，所以无法对较长的上下文依赖关系进行建模。它们大多数被所谓的长短期记忆网络模型（LSTMs） 所取代, 该神经网络也是 RNN 的一种形式，但可以捕获文档中较长的上下文。然而，LSTM 只能单向处理序列，因此基于 LSTM 的最先进方法演变为双向 LSTM，这结构可以从左到右以及从右到左读取上下文。基于LSTM有非常成功的模型，如ELMO或 ULMFIT，这些模型仍然适用于现在的NLP任务。
+大多数较旧的语言建模方法都基于 RNN（recurrent neural network）。简单的 RNN 存在梯度消失/梯度爆炸问题，所以无法对较长的上下文依赖关系进行建模。它们大多数被所谓的长短期记忆网络模型（LSTMs） 所取代, 该神经网络也是 RNN 的一个变种形式，但可以捕获文档中较长的上下文。然而，LSTM 只能单向处理序列，因此基于 LSTM 的最先进方法演变为双向 LSTM，此结构可以从左到右以及从右到左读取上下文。基于LSTM有非常成功的模型，如ELMO或 ULMFIT，这些模型仍然适用于现在的NLP任务。
+
+
+
+
 
 
 
 ### 基于transformers架构的方法
 
-双向 LSTM 的主要限制之一是其顺序性，这使得并行训练非常困难, transformer 架构通过注意力机制(Vashvani et al. 2017) 完全取代LSTM来解决这一个问题。在注意力机制，我们把整个序列看作一个整体, 因此并行训练要容易得多。我们可以对整个文档上下文进行建模，并使用大型数据集以无人监督学习的方式进行预训练，并微调下游任务。
+双向 LSTM 的主要限制之一是其顺序性，这使得并行训练非常困难, transformer 架构通过注意力机制(Vashvani et al. 2017) 完全取代LSTM来解决这一个问题。在注意力机制中，我们把整个序列看作一个整体, 因此并行训练要容易得多。我们可以对整个文档上下文进行建模，并使用大型数据集以无人监督学习的方式进行预训练，并微调下游任务。
+
+
+
+
 
 
 
 ### 最先进的transformers模型
 
-有很多基于变压器的语言模型。最成功的是以下这些（截至2020年4月）
+有很多基于transformers的语言模型。最成功的是以下这些（截至2020年4月）
 
 - [Transformer (Google Brain/Research)](https://arxiv.org/abs/1706.03762)
 - [BERT (Google Research)](https://github.com/google-research/bert)
@@ -59,13 +79,21 @@ transformers用于构建语言模型，而embeddings 是可以用于预训练的
 - [Megatron (NVidia)](https://devblogs.nvidia.com/training-bert-with-gpus/)
 - [Turing-NLG (Microsoft)](https://www.microsoft.com/en-us/research/blog/turing-nlg-a-17-billion-parameter-language-model-by-microsoft/)
 
-这些模型之间略有差异，BERT一直被认为是许多 NLP 任务中最先进的模型。但现在看来，它已被同样来自谷歌的 XLNet 所超越。XLNet 利用置换语言建模，该模型对句子中所有可能的单词排列进行自动回归模型。我们将在本文中使用基于 BERT 的语言模型。
+这些模型之间略有差异，而BERT一直被认为是许多 NLP 任务中最先进的模型。但现在看来，它已被同样来自谷歌的 XLNet 所超越。XLNet 利用置换语言建模，该模型对句子中所有可能的单词排列进行自动回归模型。我们将在本文中使用基于 BERT 的语言模型。
+
+
+
+
 
 
 
 ### BERT
 
 BERT (Bidirectional Encoder Representations from Transformers) (Devlint et al., 2018) 是一种预训练语言表示的方法。我们不会讨论太多细节，但与原始transformers (Vaswani et al., 2017) 的主要区别是, BERT没有解码器, 但在基本版本中堆叠了12个编码器，而且在更大的预训练模型中会增加编码器的数量。这种架构不同于 OpenAI 的 GPT-2，它是适合自然语言生成 （NLG） 的自回归语言模型。
+
+
+
+
 
 
 
@@ -83,7 +111,7 @@ BERT (Bidirectional Encoder Representations from Transformers) (Devlint et al., 
 
 ![Image for post](https://miro.medium.com/max/1198/1*DCecU2zaDXy1jKgaB_R97w.png)
 
-使用变压器库时，我们首先加载要使用的模型的标记器。然后，我们将按如下方式进行：
+使用transformers库时，我们首先加载要使用的模型的标记器。然后，我们将按如下方式进行：
 
 
 
@@ -126,9 +154,7 @@ bert_input = {
 print(bert_input)
 ```
 
-
-
-We can see that the sequence is tokenized, we have added **special tokens** as well as calculate the number of pad tokens needed in order to have the same length of the sequence as the maximal length 20. Then we have added **token types**, which are all the same as we do not have sequence pairs. **Attention mask** will tell the model that we should not focus attention on [PAD] tokens.
+OUTPUT:
 
 ```python
 tokenized ['[CLS]', '曝', '梅', '西', '已', '通', '知', '巴', '萨', '他', '想', '离', '开', '[SEP]']
@@ -149,6 +175,10 @@ bert_input = tokenizer.encode_plus(
               )
 print('encoded', bert_input)
 ```
+
+
+
+
 
 
 
@@ -177,6 +207,8 @@ print('encoded', bert_input)
 
 
 
+
+
 ### 微调（Fine-tuning）
 
 一旦我们自己预训练了模型，或者加载了已预训练过的模型（例如BERT-based-uncased、BERT-based-chinese）,我们就可以开始对下游任务（如问题解答或文本分类）的模型进行微调。我们可以看到，BERT 可以将预训练的 BERT 表示层嵌入到许多特定任务中，对于文本分类，我们将只在顶部添加简单的 softmax 分类器。
@@ -188,6 +220,8 @@ print('encoded', bert_input)
 预训练阶段需要显著的计算能力 (BERT base: 4 days on 16 TPUs; BERT large 4 days on 64 TPUs)。所以保存预训练的模型，然后微调一个特定的数据集非常有用。与预训练不同，微调不需要太多的计算能力，即使在单个 GPU 上，也可以在几个小时内完成微调过程。当对文本分类进行微调时，我们可以选择几个方式，请参阅下图 (Sun et al. 2019)
 
 ![Image for post](https://miro.medium.com/max/621/1*oWn8t-q_HdV_Nkthie2u6g.png)
+
+
 
 ### 数据集
 
@@ -203,7 +237,7 @@ print('encoded', bert_input)
 
 数据集在 [data.txt](https://github.com/NZbryan/MachineLearning/blob/master/NLP/data.txt)
 
-现将数据集层次抽样划分为训练集、验证集、测试集：
+现将数据集按照层次抽样划分为训练集、验证集、测试集：
 
 | 数据集 | 数据量 |
 | ------ | ------ |
@@ -235,6 +269,8 @@ df_raw = pd.merge(df_raw,df_label,on="label",how="left")
 
 train_data,val_data, test_data = split_dataset(df_raw)
 ```
+
+
 
 
 
@@ -393,7 +429,7 @@ Epoch 8/8
 
 ### 运行环境
 
-```
+```shell
 linux: CentOS Linux release 7.6.1810
 
 python: Python 3.6.10
@@ -406,7 +442,23 @@ pandas==1.1.0
 scikit-learn==0.22.2
 ```
 
+
+
+### 使用方式
+
+```shell
+git clone https://github.com/NZbryan/NLP_bert.git
+cd NLP_bert
+
+python3 tf2.0_bert_emb_ch_MultiClass.py
+```
+
+
+
 由于数据量较大,训练时间长,建议在GPU下运行,或者到colab去跑。
 
+[全部代码](https://github.com/NZbryan/NLP_bert/blob/master/tf2.0_bert_emb_ch_MultiClass.py)
 
 
+
+参考：[Text classification with transformers in Tensorflow 2: BERT](https://medium.com/atheros/text-classification-with-transformers-in-tensorflow-2-bert-2f4f16eff5ad)
