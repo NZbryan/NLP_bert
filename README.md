@@ -98,13 +98,24 @@ def encode_examples(ds, limit=-1):
 我们可以使用以下函数对数据集进行编码：
 
 ```python
+# train dataset
+ds_train_encoded = encode_examples(train_data).shuffle(10000).batch(batch_size)
+# val dataset
+ds_val_encoded = encode_examples(val_data).batch(batch_size)
+# test dataset
+ds_test_encoded = encode_examples(test_data).batch(batch_size)
+```
+
+
+
+创建模型
+
+```python
 from transformers import TFBertForSequenceClassification
 import tensorflow as tf
 
 model = TFBertForSequenceClassification.from_pretrained('bert-base-chinese', num_labels=10)
 ```
-
-
 
 编译与训练模型
 
