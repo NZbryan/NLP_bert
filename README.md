@@ -1,3 +1,5 @@
+# tensorflow 2.0+ 基于BERT模型的文本分类
+
 ### 数据集
 
 使用THUCNews的一个子集进行训练与测试，数据集请自行到[THUCTC](https://link.zhihu.com/?target=http%3A//thuctc.thunlp.org/)：一个高效的中文文本分类工具包下载，请遵循数据提供方的开源协议。
