@@ -21,6 +21,7 @@ def convert_example_to_feature(review):
 	            max_length = max_length, # max length of the text that can go to BERT
 	            pad_to_max_length = True, # add [PAD] tokens
 	            return_attention_mask = True, # add attention mask to not focus on pad tokens
+		    truncation=True
 	          )
 # map to the expected input to TFBertForSequenceClassification, see here 
 def map_example_to_dict(input_ids, attention_masks, token_type_ids, label):
