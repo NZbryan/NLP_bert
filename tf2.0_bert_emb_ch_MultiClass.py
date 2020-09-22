@@ -1,7 +1,7 @@
 import logging
 logging.basicConfig(level=logging.ERROR)
 # from transformers import TFBertPreTrainedModel,TFBertMainLayer,BertTokenizer
-from transformers import TFBertForSequenceClassification
+from transformers import TFBertForSequenceClassification,BertTokenizer
 import tensorflow as tf
 # from transformers.modeling_tf_utils import (
 #     TFQuestionAnsweringLoss,
