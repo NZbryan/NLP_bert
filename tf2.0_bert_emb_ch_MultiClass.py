@@ -3,13 +3,6 @@ logging.basicConfig(level=logging.ERROR)
 # from transformers import TFBertPreTrainedModel,TFBertMainLayer,BertTokenizer
 from transformers import TFBertForSequenceClassification,BertTokenizer
 import tensorflow as tf
-# from transformers.modeling_tf_utils import (
-#     TFQuestionAnsweringLoss,
-#     TFTokenClassificationLoss,
-#     get_initializer,
-#     keras_serializable,
-#     shape_list,
-# )
 import pandas as pd
 from sklearn.model_selection import train_test_split
 
@@ -66,32 +59,6 @@ def split_dataset(df):
     return train_set,val_set, test_set
 
 
-# class TFBertForMultilabelClassification(TFBertPreTrainedModel):
-
-#     def __init__(self, config, *inputs, **kwargs):
-#         super(TFBertForMultilabelClassification, self).__init__(config, *inputs, **kwargs)
-#         self.num_labels = config.num_labels
-
-#         self.bert = TFBertMainLayer(config, name='bert')
-#         self.dropout = tf.keras.layers.Dropout(config.hidden_dropout_prob)
-#         self.classifier = tf.keras.layers.Dense(config.num_labels,
-#                                                 kernel_initializer=get_initializer(config.initializer_range),
-#                                                 name='classifier',
-#                                                 activation='sigmoid')
-
-#     def call(self, inputs, **kwargs):
-#         outputs = self.bert(inputs, **kwargs)
-
-#         pooled_output = outputs[1]
-
-#         pooled_output = self.dropout(pooled_output, training=kwargs.get('training', False))
-#         logits = self.classifier(pooled_output)
-
-#         outputs = (logits,) + outputs[2:]  # add hidden states and attention if they are here
-
-#         return outputs  # logits, (hidden_states), (attentions)
-
-
 
 if __name__ == '__main__': 
 
@@ -123,7 +90,6 @@ if __name__ == '__main__':
 	ds_test_encoded = encode_examples(test_data).batch(batch_size)
 
 	# model initialization
-	# model = TFBertForMultilabelClassification.from_pretrained(model_path, num_labels=num_classes)
 	model = TFBertForSequenceClassification.from_pretrained(model_path, num_labels=num_classes)
 
 	# optimizer Adam recommended
