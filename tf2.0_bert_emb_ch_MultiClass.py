@@ -124,7 +124,7 @@ if __name__ == '__main__':
 
 	# model initialization
 	# model = TFBertForMultilabelClassification.from_pretrained(model_path, num_labels=num_classes)
-	model = TFBertForSequenceClassification.from_pretrained('bert-base-chinese', num_labels=num_classes)
+	model = TFBertForSequenceClassification.from_pretrained(model_path, num_labels=num_classes)
 
 	# optimizer Adam recommended
 	optimizer = tf.keras.optimizers.Adam(learning_rate=learning_rate,epsilon=1e-08, clipnorm=1)
